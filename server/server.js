@@ -4,7 +4,6 @@ const cors = require("cors");
 const passport = require("passport");
 const authRoute = require("./routes/auth");
 const session = require("express-session");
-require("./passportStrategy");
 require("./db/conn");
 
 const app = express();

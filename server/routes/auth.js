@@ -1,5 +1,40 @@
 const router = require("express").Router();
 const passport = require("passport");
+require("../passportStrategies/googleStrategy");
+require("../passportStrategies/localStrategy");
+const User = require("../models/userSchema");
+const bcrypt = require("bcrypt");
+
+router.post(
+	"/login",
+	passport.authenticate("local")
+);
+
+router.post("/register", async (req, res) => {
+	const { name, email, password } = req.body;
+
+	try {
+		const user = await User.findOne({ email: email });
+
+		if (user) {
+			return res.status(400).json({ success: false, message: "User already exists" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const newUser = new User({
+			displayName: name,
+			email: email,
+			password: hashedPassword,
+		});
+
+		await newUser.save();
+		res.json({ success: true, message: "User created successfully" });
+
+	} catch (error) {
+		res.status(500).json({ success: false, message: "Internal server error" });
+	}
+});
 
 router.get("/login/success", (req, res) => {
 	if (req.user) {
