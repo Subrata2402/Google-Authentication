@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const passport = require("passport");
-require('../passportStrategy');
 
 router.get("/login/success", (req, res) => {
 	if (req.user) {
